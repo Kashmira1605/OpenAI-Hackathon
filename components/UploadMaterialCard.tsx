@@ -16,14 +16,20 @@ type GeneratedQuestResponse = StudyQuest & {
 
 export function UploadMaterialCard({
   courseId,
-  courseTitle
+  courseTitle,
+  initialType = "lecture_notes",
+  headline = "Upload or paste class material",
+  subcopy = "This is different from the sprint planner: the planner decides when to study, this section creates what you will study."
 }: {
   courseId: string;
   courseTitle: string;
+  initialType?: MaterialType;
+  headline?: string;
+  subcopy?: string;
 }) {
   const [title, setTitle] = useState("");
   const [rawText, setRawText] = useState("");
-  const [type, setType] = useState<MaterialType>("lecture_notes");
+  const [type, setType] = useState<MaterialType>(initialType);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<GeneratedQuestResponse | null>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -121,13 +127,9 @@ export function UploadMaterialCard({
           <Upload className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-ink">Upload or paste class material</h2>
-          <p className="text-sm text-black/55">This is different from the sprint planner: the planner decides when to study, this section creates what you will study.</p>
+          <h2 className="text-xl font-semibold text-ink">{headline}</h2>
+          <p className="text-sm text-black/55">{subcopy}</p>
         </div>
-      </div>
-
-      <div className="rounded-[1.5rem] bg-white p-4 text-sm text-black/60">
-        Paste notes, a transcript, or syllabus text here and generate a quest from that material. If you only want a timer, use the planner above. If you want cards, a game path, and quiz missions, use this section.
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[0.8fr_1.2fr]">

@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarClock, Zap } from "lucide-react";
 
+import { getAssessmentLabel } from "@/lib/courseHelpers";
 import { Course } from "@/lib/types";
 
 export function ClassCard({ course }: { course: Course }) {
+  const assessment = getAssessmentLabel(course);
+
   return (
     <motion.div
       whileHover={{ y: -4 }}
@@ -17,6 +20,7 @@ export function ClassCard({ course }: { course: Course }) {
         <div>
           <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-black/45">
             <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: course.color }} />
+            {course.number ? `Portal ${course.number}` : null}
             {course.professor}
           </div>
           <h3 className="text-2xl font-semibold text-ink">{course.title}</h3>
@@ -47,11 +51,22 @@ export function ClassCard({ course }: { course: Course }) {
         </div>
       </div>
 
+      <div className="mt-4 rounded-3xl bg-white p-4 text-sm">
+        <div className="mb-2 inline-flex items-center gap-2 text-black/55">
+          <CalendarClock className="h-4 w-4" />
+          Current study quest
+        </div>
+        <div className="font-semibold text-ink">{assessment.title}</div>
+        <div className="mt-1 text-black/55">
+          {assessment.countdown !== null ? `${assessment.countdown} days left` : assessment.subtitle}
+        </div>
+      </div>
+
       <Link
         href={`/class/${course.id}`}
         className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-ember transition hover:text-emberDark"
       >
-        Open class hub
+        Enter class world
         <ArrowRight className="h-4 w-4" />
       </Link>
     </motion.div>

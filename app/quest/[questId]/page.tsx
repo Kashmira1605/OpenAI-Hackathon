@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArcadeStudyGame } from "@/components/ArcadeStudyGame";
 import { InteractiveMissionBoard } from "@/components/InteractiveMissionBoard";
 import { QuestRewardClaim } from "@/components/QuestRewardClaim";
+import { getAssessmentLabel, getNearestAssessment } from "@/lib/courseHelpers";
 import { getQuestData } from "@/lib/data";
 
 export default async function QuestPage({
@@ -24,6 +25,8 @@ export default async function QuestPage({
   }
 
   const course = state.course;
+  const nextAssessment = course ? getNearestAssessment(course) : undefined;
+  const assessmentLabel = course ? getAssessmentLabel(course) : null;
 
   return (
     <main className="grid gap-8">
@@ -39,8 +42,17 @@ export default async function QuestPage({
         <p className="text-sm uppercase tracking-[0.22em] text-black/45">{course?.title}</p>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-semibold text-ink">{quest.topic}</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-black/60">{quest.summary}</p>
+            <h1 className="text-4xl font-semibold text-ink">
+              {course?.title} World: {quest.topic}
+            </h1>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-black/60">
+              {nextAssessment
+                ? `Current Study Quest: Prep for ${nextAssessment.title}. ${assessmentLabel?.countdown} days left.`
+                : quest.summary}
+            </p>
+            {nextAssessment ? (
+              <p className="mt-2 text-sm leading-6 text-black/55">Focus topics: {nextAssessment.topics.join(", ")}</p>
+            ) : null}
           </div>
           <div className="rounded-[1.5rem] bg-white px-4 py-3 text-right">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-black/45">{quest.badge}</div>

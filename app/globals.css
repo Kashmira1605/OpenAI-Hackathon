@@ -4,18 +4,47 @@
 
 :root {
   color-scheme: light;
+  --bg-top-left: rgba(198, 93, 39, 0.14);
+  --bg-top-right: rgba(91, 108, 79, 0.1);
+  --bg-start: #fffdf8;
+  --bg-end: #f8f3ea;
+  --panel-tint: rgba(255, 255, 255, 0.72);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+html[data-mood="focus"] {
+  --bg-top-left: rgba(47, 90, 80, 0.16);
+  --bg-top-right: rgba(187, 132, 64, 0.14);
+  --bg-start: #f7fbf8;
+  --bg-end: #edf4ee;
+  --panel-tint: rgba(255, 255, 255, 0.8);
+}
+
+html[data-mood="energy"] {
+  --bg-top-left: rgba(214, 108, 41, 0.2);
+  --bg-top-right: rgba(243, 182, 70, 0.18);
+  --bg-start: #fff9f1;
+  --bg-end: #fff1e2;
+  --panel-tint: rgba(255, 248, 238, 0.82);
+}
+
+html[data-mood="cozy"] {
+  --bg-top-left: rgba(138, 78, 64, 0.18);
+  --bg-top-right: rgba(120, 132, 87, 0.14);
+  --bg-start: #fcf7f1;
+  --bg-end: #f1ebe2;
+  --panel-tint: rgba(255, 250, 244, 0.82);
+}
+
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(198, 93, 39, 0.14), transparent 32%),
-    radial-gradient(circle at top right, rgba(91, 108, 79, 0.1), transparent 28%),
-    linear-gradient(180deg, #fffdf8 0%, #f8f3ea 100%);
+    radial-gradient(circle at top left, var(--bg-top-left), transparent 32%),
+    radial-gradient(circle at top right, var(--bg-top-right), transparent 28%),
+    linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
   color: #231815;
 }
 
@@ -28,4 +57,12 @@ body {
     linear-gradient(rgba(35, 24, 21, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(35, 24, 21, 0.04) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+.mood-shell {
+  transition: background-color 180ms ease;
+}
+
+.mood-panel {
+  background: var(--panel-tint);
 }

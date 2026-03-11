@@ -1,4 +1,4 @@
-import { AcademicYear, Badge, Course, Material, Semester, Student, StudyQuest } from "@/lib/types";
+import { AcademicYear, Assessment, Badge, Course, Material, Semester, Student, StudyQuest } from "@/lib/types";
 import { buildQuestFromMaterial } from "@/lib/questParser";
 
 const materials: Material[] = [
@@ -52,11 +52,46 @@ const quests: StudyQuest[] = materials.map((material, index) => ({
   completed: index === 0
 }));
 
+const assessments: Assessment[] = [
+  {
+    id: "bio-midterm-1",
+    courseId: "biology-101",
+    title: "Midterm 1",
+    type: "midterm",
+    dueDate: "2026-10-18",
+    topics: ["Cell structure", "Nucleus", "Mitosis"]
+  },
+  {
+    id: "mkt-quiz-1",
+    courseId: "marketing-320",
+    title: "Case study quiz",
+    type: "quiz",
+    dueDate: "2026-10-21",
+    topics: ["MVP framing", "User validation", "Launch assumptions"]
+  },
+  {
+    id: "psych-exam-1",
+    courseId: "psych-110",
+    title: "Memory systems exam",
+    type: "exam",
+    dueDate: "2026-10-24",
+    topics: ["Sensory memory", "Working memory", "Encoding"]
+  },
+  {
+    id: "stats-midterm",
+    courseId: "stats-210",
+    title: "Probability midterm",
+    type: "midterm",
+    dueDate: "2026-10-16",
+    topics: ["Independent events", "Conditional probability", "Distributions"]
+  }
+];
+
 const courseBase: Array<Omit<Course, "materials" | "quests" | "progress">> = [
-  { id: "biology-101", title: "Biology 101", professor: "Dr. Rivera", color: "#C65D27", syllabus: "Weeks 1-4: Cells and energy systems." },
-  { id: "marketing-320", title: "Marketing 320", professor: "Prof. Patel", color: "#D98B4F", syllabus: "Brand strategy, customer research, and launch planning." },
-  { id: "psych-110", title: "Intro to Psychology", professor: "Dr. Nguyen", color: "#5B6C4F", syllabus: "Memory, cognition, development, and behavior." },
-  { id: "stats-210", title: "Statistics", professor: "Prof. Ellis", color: "#7A8E6B", syllabus: "Descriptive stats, probability, inference, and testing." }
+  { id: "biology-101", number: 1, title: "Biology 101", professor: "Dr. Rivera", color: "#C65D27", syllabus: "Weeks 1-4: Cells and energy systems.", assessments: assessments.filter((item) => item.courseId === "biology-101") },
+  { id: "marketing-320", number: 2, title: "Marketing 320", professor: "Prof. Patel", color: "#D98B4F", syllabus: "Brand strategy, customer research, and launch planning.", assessments: assessments.filter((item) => item.courseId === "marketing-320") },
+  { id: "psych-110", number: 3, title: "Intro to Psychology", professor: "Dr. Nguyen", color: "#5B6C4F", syllabus: "Memory, cognition, development, and behavior.", assessments: assessments.filter((item) => item.courseId === "psych-110") },
+  { id: "stats-210", number: 4, title: "Statistics", professor: "Prof. Ellis", color: "#7A8E6B", syllabus: "Descriptive stats, probability, inference, and testing.", assessments: assessments.filter((item) => item.courseId === "stats-210") }
 ];
 
 export const currentSemester: Semester = {
@@ -93,12 +128,14 @@ export const springSemester: Semester = {
   classes: [
     {
       id: "econ-201",
+      number: 1,
       title: "Economics 201",
       professor: "Prof. James",
       color: "#A14C25",
       syllabus: "Market structures and macro indicators.",
       materials: [],
       quests: [],
+      assessments: [],
       progress: { xp: 0, completionRate: 0, missionsCompleted: 0, questsCompleted: 0 }
     }
   ]

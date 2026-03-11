@@ -47,6 +47,15 @@ export interface StudyQuest {
   completed: boolean;
 }
 
+export interface Assessment {
+  id: string;
+  courseId: string;
+  title: string;
+  type: "quiz" | "exam" | "midterm" | "final" | "assignment";
+  dueDate: string;
+  topics: string[];
+}
+
 export interface CourseProgress {
   xp: number;
   completionRate: number;
@@ -56,12 +65,14 @@ export interface CourseProgress {
 
 export interface Course {
   id: string;
+  number?: number;
   title: string;
   professor: string;
   color: string;
   syllabus?: string;
   materials: Material[];
   quests: StudyQuest[];
+  assessments: Assessment[];
   progress: CourseProgress;
 }
 

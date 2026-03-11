@@ -169,12 +169,14 @@ function buildSemesters(data: {
 
         return {
           id: courseRow.id,
+          number: undefined,
           title: courseRow.title,
           professor: courseRow.professor,
           color: courseRow.color,
           syllabus: courseRow.syllabus ?? undefined,
           materials,
           quests,
+          assessments: [],
           progress: {
             xp: courseRow.xp,
             completionRate: courseRow.completion_rate,
@@ -236,14 +238,17 @@ function buildNextAction(semester: Semester) {
   }
 
   const nextQuest = nextCourse.quests[0];
+  const nextAssessment = nextCourse.assessments[0];
 
   return {
     classId: nextCourse.id,
     classTitle: nextCourse.title,
     questId: nextQuest?.id,
-    title: nextQuest?.topic ?? "Add your first study item",
+    title: nextAssessment ? `Prepare for ${nextAssessment.title}` : nextQuest?.topic ?? "Add your first study item",
     durationMin: nextQuest?.missions[0]?.durationMin ?? 5,
-    reason: `${nextCourse.title} is the lowest-progress class this week, so one short mission moves the semester forward fastest.`,
+    reason: nextAssessment
+      ? `${nextCourse.title} has the nearest upcoming assessment, so the next move should help you prep for ${nextAssessment.title}.`
+      : `${nextCourse.title} is the lowest-progress class this week, so one short mission moves the semester forward fastest.`,
     xp: nextQuest?.missions[0]?.xp ?? 10
   };
 }

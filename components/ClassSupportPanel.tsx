@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { DeadlineTracker, TrackedDeadline } from "@/components/DeadlineTracker";
 import { FocusSprintPlanner } from "@/components/FocusSprintPlanner";
+import { QuestNotificationPlanner } from "@/components/QuestNotificationPlanner";
 import { ReminderBell } from "@/components/ReminderBell";
 import { Course } from "@/lib/types";
 
@@ -24,6 +25,7 @@ export function ClassSupportPanel({ course }: { course: Course }) {
         targetDate={nextDeadline?.dueDate}
         targetLabel={nextDeadline ? `${nextDeadline.kind}: ${nextDeadline.title}` : undefined}
       />
+      <QuestNotificationPlanner course={course} deadlines={deadlines} />
       <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
         <ReminderBell courseTitle={course.title} targetLabel={nextDeadline?.title} />
         <DeadlineTracker courseId={course.id} onDeadlinesChange={setDeadlines} />

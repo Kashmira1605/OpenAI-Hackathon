@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { BadgeCard } from "@/components/BadgeCard";
+import { LeaderboardPanel } from "@/components/LeaderboardPanel";
 import { ProgressRing } from "@/components/ProgressRing";
 import { RewardsVault } from "@/components/RewardsVault";
 import { getAppState } from "@/lib/data";
@@ -93,6 +94,8 @@ export default async function RewardsPage() {
           </div>
         </div>
       </section>
+
+      <LeaderboardPanel student={state.student} />
 
       <RewardsVault serverBadges={state.badges} serverClaimedXp={serverClaimedXp} />
     </main>
