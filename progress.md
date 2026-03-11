@@ -7,3 +7,5 @@ Original prompt: yes, and also in game section I would like a video game that a 
 - Added a canvas-based Forest Quest game with `window.render_game_to_text` and `window.advanceTime`.
 - Removed the Supabase status banner from the main signed-in pages and fixed duplicate quiz keys.
 - Installed local Playwright, but the required skill client still fails because it resolves `playwright` from `/Users/kashmira/.codex/skills/develop-web-game/scripts/` instead of this repo's `node_modules`.
+- Replaced the repeated forest/trail quest layers with a single arcade-style study run and trimmed repeated static card sections from the quest page.
+- TODO: remove the old unused forest game/playground components once the new arcade flow has been exercised more.

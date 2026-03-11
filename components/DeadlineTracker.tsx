@@ -12,6 +12,33 @@ export type TrackedDeadline = {
   completed: boolean;
 };
 
+type EffortPreset = {
+  minutes: number;
+  label: string;
+  helper: string;
+};
+
+function presetsFor(kind: TrackedDeadline["kind"]): EffortPreset[] {
+  if (kind === "exam") {
+    return [
+      { minutes: 20, label: "Light review", helper: "Quick refresh before the test" },
+      { minutes: 40, label: "Standard prep", helper: "A normal review session" },
+      { minutes: 60, label: "Deep prep", helper: "Needs more serious revision time" }
+    ];
+  }
+
+  return [
+    { minutes: 15, label: "Quick task", helper: "Small assignment or easy checkpoint" },
+    { minutes: 30, label: "One session", helper: "A normal focused work block" },
+    { minutes: 45, label: "Heavy push", helper: "Bigger task that needs more effort" }
+  ];
+}
+
+function labelForDeadline(kind: TrackedDeadline["kind"], minutes: number) {
+  const preset = presetsFor(kind).find((item) => item.minutes === minutes);
+  return preset ? preset.label : `${minutes} min`;
+}
+
 function storageKey(courseId: string) {
   return `study-quest-deadlines-${courseId}`;
 }
@@ -49,8 +76,10 @@ export function DeadlineTracker({
   const [title, setTitle] = useState("");
   const [kind, setKind] = useState<TrackedDeadline["kind"]>("assignment");
   const [dueDate, setDueDate] = useState("");
-  const [estimatedMinutes, setEstimatedMinutes] = useState(25);
+  const [estimatedMinutes, setEstimatedMinutes] = useState(30);
   const [deadlines, setDeadlines] = useState<TrackedDeadline[]>([]);
+  const [error, setError] = useState("");
+  const effortPresets = useMemo(() => presetsFor(kind), [kind]);
 
   useEffect(() => {
     const stored = readTrackedDeadlines(courseId);
@@ -65,9 +94,17 @@ export function DeadlineTracker({
   };
 
   const addDeadline = () => {
-    if (!title.trim() || !dueDate) {
+    if (!title.trim()) {
+      setError("Add a name for the assignment or exam before saving it.");
       return;
     }
+
+    if (!dueDate) {
+      setError("Pick a due date before saving it.");
+      return;
+    }
+
+    setError("");
 
     const next = [
       {
@@ -84,7 +121,7 @@ export function DeadlineTracker({
     persist(next);
     setTitle("");
     setDueDate("");
-    setEstimatedMinutes(25);
+    setEstimatedMinutes(30);
     setKind("assignment");
   };
 
@@ -122,45 +159,81 @@ export function DeadlineTracker({
 
       <div className="grid gap-3">
         <div className="grid gap-3 md:grid-cols-[0.9fr_1.1fr]">
-          <select
-            value={kind}
-            onChange={(event) => setKind(event.target.value as TrackedDeadline["kind"])}
-            className="rounded-2xl border border-black/10 bg-cream px-4 py-3 text-sm outline-none"
-          >
-            <option value="assignment">Assignment</option>
-            <option value="exam">Exam</option>
-          </select>
-          <input
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="Chapter 4 problem set"
-            className="rounded-2xl border border-black/10 bg-cream px-4 py-3 text-sm outline-none"
-          />
+          <label className="grid gap-2 text-sm font-medium text-black/70">
+            Type
+            <select
+              value={kind}
+              onChange={(event) => {
+                const nextKind = event.target.value as TrackedDeadline["kind"];
+                setKind(nextKind);
+                setEstimatedMinutes(presetsFor(nextKind)[1]?.minutes ?? 30);
+              }}
+              className="rounded-2xl border border-black/10 bg-cream px-4 py-3 text-sm outline-none"
+            >
+              <option value="assignment">Assignment</option>
+              <option value="exam">Exam</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-medium text-black/70">
+            Name
+            <input
+              value={title}
+              onChange={(event) => {
+                setTitle(event.target.value);
+                if (error) {
+                  setError("");
+                }
+              }}
+              placeholder="Chapter 4 problem set"
+              className="rounded-2xl border border-black/10 bg-cream px-4 py-3 text-sm outline-none"
+            />
+          </label>
         </div>
 
         <div className="grid gap-3 md:grid-cols-[0.9fr_0.7fr_0.4fr]">
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(event) => setDueDate(event.target.value)}
-            className="rounded-2xl border border-black/10 bg-cream px-4 py-3 text-sm outline-none"
-          />
-          <input
-            type="number"
-            min={5}
-            step={5}
-            value={estimatedMinutes}
-            onChange={(event) => setEstimatedMinutes(Number(event.target.value))}
-            className="rounded-2xl border border-black/10 bg-cream px-4 py-3 text-sm outline-none"
-          />
+          <label className="grid gap-2 text-sm font-medium text-black/70">
+            Due date
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(event) => {
+                setDueDate(event.target.value);
+                if (error) {
+                  setError("");
+                }
+              }}
+              className="rounded-2xl border border-black/10 bg-cream px-4 py-3 text-sm outline-none"
+            />
+          </label>
+          <label className="grid gap-2 text-sm font-medium text-black/70">
+            {kind === "exam" ? "Prep load" : "Effort size"}
+            <div className="grid gap-2">
+              {effortPresets.map((preset) => (
+                <button
+                  key={`${kind}-${preset.minutes}`}
+                  type="button"
+                  onClick={() => setEstimatedMinutes(preset.minutes)}
+                  className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${
+                    estimatedMinutes === preset.minutes
+                      ? "border-ember bg-white text-ink"
+                      : "border-black/10 bg-cream text-black/65 hover:bg-mist"
+                  }`}
+                >
+                  <div className="font-semibold">{preset.label}</div>
+                  <div className="mt-1 text-xs text-black/50">{preset.helper}</div>
+                </button>
+              ))}
+            </div>
+          </label>
           <button
             type="button"
             onClick={addDeadline}
-            className="rounded-full bg-ember px-4 py-3 text-sm font-semibold text-white transition hover:bg-emberDark"
+            className="self-end rounded-full bg-ember px-4 py-3 text-sm font-semibold text-white transition hover:bg-emberDark"
           >
             Add
           </button>
         </div>
+        {error ? <div className="rounded-[1.25rem] bg-sand p-3 text-sm text-emberDark">{error}</div> : null}
       </div>
 
       <div className="grid gap-3">
@@ -175,7 +248,7 @@ export function DeadlineTracker({
                 <div className="text-xs font-semibold uppercase tracking-[0.18em] text-black/45">{item.kind}</div>
                 <div className="mt-1 font-semibold text-ink">{item.title}</div>
                 <div className="mt-1 text-sm text-black/60">
-                  Due {item.dueDate} · {item.estimatedMinutes} min expected
+                  Due {item.dueDate} · {labelForDeadline(item.kind, item.estimatedMinutes)}
                 </div>
               </div>
               <div className="flex gap-2">

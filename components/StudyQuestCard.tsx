@@ -27,7 +27,7 @@ export function StudyQuestCard({ quest }: { quest: StudyQuest }) {
         href={`/quest/${quest.id}`}
         className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-ember transition hover:text-emberDark"
       >
-        Open study path
+        Play study run
         <ArrowRight className="h-4 w-4" />
       </Link>
     </div>

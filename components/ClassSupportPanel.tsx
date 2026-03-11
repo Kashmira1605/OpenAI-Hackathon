@@ -18,13 +18,13 @@ export function ClassSupportPanel({ course }: { course: Course }) {
   const nextDeadline = useMemo(() => getNextDeadline(deadlines), [deadlines]);
 
   return (
-    <section id="study-planner" className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+    <section id="study-planner" className="grid gap-4">
       <FocusSprintPlanner
         course={course}
         targetDate={nextDeadline?.dueDate}
         targetLabel={nextDeadline ? `${nextDeadline.kind}: ${nextDeadline.title}` : undefined}
       />
-      <div className="grid gap-4 self-start">
+      <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
         <ReminderBell courseTitle={course.title} targetLabel={nextDeadline?.title} />
         <DeadlineTracker courseId={course.id} onDeadlinesChange={setDeadlines} />
       </div>

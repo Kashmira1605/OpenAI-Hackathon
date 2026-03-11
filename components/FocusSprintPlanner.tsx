@@ -201,6 +201,7 @@ export function FocusSprintPlanner({
           .padStart(2, "0")}:${(secondsLeft % 60).toString().padStart(2, "0")}`;
 
   const timerRunning = secondsLeft !== null && secondsLeft > 0;
+  const visiblePlan = radarPlan.slice(0, 2);
 
   return (
     <section className="grid gap-5 rounded-[2rem] border border-black/5 bg-[#F4EEE1] p-6 shadow-card">
@@ -229,9 +230,8 @@ export function FocusSprintPlanner({
             This is here to reduce procrastination. Set a primary deadline, pick your energy level, and let the app shrink the work into one doable session.
           </p>
         </div>
-        <div className="rounded-[1.5rem] bg-[#243127] px-5 py-4 text-cream">
-          <div className="text-xs uppercase tracking-[0.18em] text-white/60">Sprint timer</div>
-          <div className="mt-2 text-4xl font-semibold">{secondsDisplay}</div>
+        <div className="rounded-full bg-[#243127] px-4 py-3 text-sm font-semibold text-cream">
+          {timerRunning ? `Sprint running ${secondsDisplay}` : `${sprintMinutes} min focus block`}
         </div>
       </div>
 
@@ -322,85 +322,50 @@ export function FocusSprintPlanner({
         </div>
       </div>
 
-      <section className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="rounded-[1.5rem] bg-white p-5">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-black/45">
             <CalendarClock className="h-4 w-4 text-ember" />
-            Deadline radar
+            Next steps
           </div>
-          <h3 className="mt-3 text-2xl font-semibold text-ink">
-            {daysLeft === null ? "No exam countdown yet" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} until the test`}
-          </h3>
-          <p className="mt-2 text-sm leading-6 text-black/60">{rescueCopy}</p>
-
-          {radarPlan.length > 0 ? (
-            <div className="mt-5 grid gap-3">
-              {radarPlan.map((item, index) => (
+          <p className="mt-3 text-sm leading-6 text-black/60">{rescueCopy}</p>
+          {visiblePlan.length > 0 ? (
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {visiblePlan.map((item, index) => (
                 <div
                   key={`${item.label}-${item.title}-${index}`}
-                  className={`rounded-[1.35rem] p-4 ${
-                    item.tone === "now"
-                      ? "bg-[#243127] text-white"
-                      : item.tone === "soon"
-                        ? "bg-cream text-black"
-                        : "bg-sand text-black"
-                  }`}
+                  className={`rounded-[1.25rem] p-4 ${index === 0 ? "bg-[#243127] text-white" : "bg-cream text-black"}`}
                 >
-                  <div className={`text-xs font-semibold uppercase tracking-[0.18em] ${item.tone === "now" ? "text-white/65" : "text-black/45"}`}>
+                  <div className={`text-xs font-semibold uppercase tracking-[0.18em] ${index === 0 ? "text-white/65" : "text-black/45"}`}>
                     {item.label}
                   </div>
                   <div className="mt-2 text-lg font-semibold">{item.title}</div>
-                  <div className={`mt-2 text-sm leading-6 ${item.tone === "now" ? "text-white/75" : "text-black/60"}`}>
-                    {item.detail}
-                  </div>
-                  <div className={`mt-3 inline-flex rounded-full px-3 py-2 text-sm font-semibold ${item.tone === "now" ? "bg-white/10 text-white" : "bg-white text-black/70"}`}>
-                    {item.minutes} min target
-                  </div>
+                  <div className={`mt-2 text-sm leading-6 ${index === 0 ? "text-white/75" : "text-black/60"}`}>{item.detail}</div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="mt-5 rounded-[1.35rem] bg-cream p-4 text-sm text-black/60">
-              Add a test date to get a day-by-day plan instead of one generic sprint.
+            <div className="mt-4 rounded-[1.25rem] bg-cream p-4 text-sm text-black/60">
+              Add a deadline to turn this into a calmer two-step plan.
             </div>
           )}
         </div>
 
-        <div className="grid gap-4">
-          <div className="rounded-[1.5rem] bg-white p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-black/45">
-              <ShieldAlert className="h-4 w-4 text-ember" />
-              Panic mode
-            </div>
-            <h3 className="mt-3 text-2xl font-semibold text-ink">Behind? Use a controlled fallback.</h3>
-            <p className="mt-2 text-sm leading-6 text-black/60">
-              Panic mode is not for doing more. It is for cutting the plan down to the minimum useful path so the student can recover instead of freezing.
-            </p>
-            <div className="mt-4 grid gap-3">
-              <div className="rounded-[1.25rem] bg-cream p-4 text-sm text-black/65">
-                1. Review one concept cluster only.
-              </div>
-              <div className="rounded-[1.25rem] bg-cream p-4 text-sm text-black/65">
-                2. Do two checkpoint questions instead of a full quiz set.
-              </div>
-              <div className="rounded-[1.25rem] bg-cream p-4 text-sm text-black/65">
-                3. Stop after one win so starting stays easier tomorrow.
-              </div>
-            </div>
+        <div className="rounded-[1.5rem] bg-white p-5">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-black/45">
+            {panicMode ? <ShieldAlert className="h-4 w-4 text-ember" /> : energyMode === "low" ? <MoonStar className="h-4 w-4 text-ember" /> : <Route className="h-4 w-4 text-ember" />}
+            Support note
           </div>
-
-          <div className="rounded-[1.5rem] bg-white p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-black/45">
-              {energyMode === "low" ? <MoonStar className="h-4 w-4 text-ember" /> : <Route className="h-4 w-4 text-ember" />}
-              Recovery logic
-            </div>
-            <h3 className="mt-3 text-2xl font-semibold text-ink">Study the way your energy actually works.</h3>
-            <p className="mt-2 text-sm leading-6 text-black/60">
-              {energyMode === "low"
-                ? "Low-energy mode assumes the problem is activation, not motivation. Keep the session short and use recognition over deep reading."
-                : "Normal and locked-in modes stretch the sprint slightly, but the structure still protects against overcommitting and crashing later."}
-            </p>
-          </div>
+          <h3 className="mt-3 text-xl font-semibold text-ink">
+            {panicMode ? "Recovery mode is active" : energyMode === "low" ? "Low-energy mode is active" : "Keep the plan intentionally small"}
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-black/60">
+            {panicMode
+              ? "Cut the target down. One concept cluster and two questions is enough for today."
+              : energyMode === "low"
+                ? "Use quick recall and recognition tasks first. Do not force a long reading block."
+                : "The goal is to start cleanly and stop before the work starts feeling huge."}
+          </p>
         </div>
       </section>
     </section>
